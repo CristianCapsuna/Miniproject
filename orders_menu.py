@@ -1,16 +1,14 @@
 from os import system
 from auxiliary_functions import *
 
-def edit_menu(clear_command, which_menu:str, operation_mode:str):
-    if which_menu == 'products':
-        file = 'Products.txt'
-        key_word = 'product'
-    elif which_menu == 'curiers':
-        file = 'Curiers.txt'
-        key_word = 'courier'
+def orders_menu(clear_command, which_menu:str, operation_mode:str):
     
-    file_content = check_if_file_exists_and_load_content(file)
+    my_file = 'Orders.txt'
+    key_word = 'order'
+    list_of_possible_choices = [0, 1, 2, 3, 4, 5, 6, 7, 8]
     
+    file_content = check_if_file_exists_and_load_content(my_file)
+
     while True:
         print(f'{key_word.replace(key_word[0],key_word[0].upper())} menu:\n\
 [0] Return to main menu\n\
@@ -18,9 +16,12 @@ def edit_menu(clear_command, which_menu:str, operation_mode:str):
 [2] Add new {key_word}\n\
 [3] Amend existing {key_word}\n\
 [4] Delete {key_word}\n\
-[5] Search {key_word}s\n')
-        
-        user_input = check_if_input_is_a_menu_option([0, 1, 2, 3, 4, 5])
+[5] Search {key_word}s\n\
+[6] Print courier list\n\
+[7] Add a courier\n\
+[8] Delete a courier\n')
+
+        user_input = check_if_input_is_a_menu_option(list_of_possible_choices)
 
         if user_input == -1:
             system(clear_command)
@@ -30,7 +31,7 @@ def edit_menu(clear_command, which_menu:str, operation_mode:str):
             return file_content
         elif user_input == 1:
             if operation_mode == 'safe':
-                file_content = check_if_file_exists_and_load_content(file)
+                file_content = check_if_file_exists_and_load_content(my_file)
             if file_content:
                 system(clear_command)
                 print(f'List of {key_word}s currently in the list:\n')
@@ -41,11 +42,38 @@ def edit_menu(clear_command, which_menu:str, operation_mode:str):
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
         elif user_input == 2:
-            product_to_add = input(f"Please provide {key_word} to add: ").lower()
+            customer_name = input("Please provide the customer name: ")
+            customer_address = input("Please provide the customer address: ")
+            customer_phone = input("Please provide the customer phone number: ")
+            with open('Couriers.txt') as f:
+                list_of_couriers = [x.replace('\n','') for x in f.readlines()]
+            while True:
+                for idx, courier in enumerate(list_of_couriers):
+                    print(idx, courier)
+                try:
+                    courier = int(input("Please provide courier number to use: "))
+                    if courier not in range(idx+1):
+                        raise ValueError
+                    break
+                except ValueError:
+                    system(clear_command)
+                    print('Please input a valid number corresponding to one of the couriers.')
+            status = 'preparing'
+            product_to_add = {
+                'customer_name': customer_name,
+                'customer_address': customer_address,
+                'customer_phone': customer_phone,
+                'courier': courier,
+                'status': status
+            }
             print('')
-            if product_to_add not in file_content:
+            element_exists_already = False
+            for element in file_content:
+                if product_to_add  == list(element.values())[0]:
+                    element_exists_already = True
+            if element_exists_already == False:
                 if operation_mode == 'safe':
-                    write_to_file(file, file_content, 'append', product_to_add)
+                    append_to_file(my_file, file_content, product_to_add)
                 file_content.append(product_to_add)
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} added succesfully.\n')
@@ -64,7 +92,7 @@ def edit_menu(clear_command, which_menu:str, operation_mode:str):
                     system(clear_command)
                     print('The item you have inputted is not in the list.\n')
                 if operation_mode == 'safe':
-                    write_to_file(file, file_content)
+                    write_to_file(my_file, file_content)
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} {product_to_replace} has been replaced with {key_word} {new_product}.\n')
             elif len(file_content) == 0:
@@ -83,7 +111,7 @@ def edit_menu(clear_command, which_menu:str, operation_mode:str):
                     system(clear_command)
                     print('The item you have inputted is not in the list.\n')
                 if operation_mode == 'safe':
-                    write_to_file(file, file_content)
+                    write_to_file(my_file, file_content)
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} {product_to_delete} has been deleted.\n')
             elif len(file_content) == 0:
@@ -102,3 +130,9 @@ def edit_menu(clear_command, which_menu:str, operation_mode:str):
             elif len(file_content) == 0:
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
+        elif user_input == 6:
+            pass
+        elif user_input == 7:
+            pass
+        elif user_input == 8:
+            pass
