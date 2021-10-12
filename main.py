@@ -23,13 +23,13 @@ class App:
 
             if user_input == -1:
                 system(clear_command)
-                print('Inappropriate input. Please input a pozitive single digit number, as per the menu\n')
+                print('Inappropriate input. Please input a positive single digit number, as per the menu\n')
             elif user_input == 0:
                 if self.operation_mode == 'fast':
                     if 'products_file_content' in locals():
                         write_to_file('Products.txt', products_file_content)
-                    if 'curiers_file_content' in locals():
-                        write_to_file('Curiers.txt', curiers_file_content)
+                    if 'couriers_file_content' in locals():
+                        write_to_file('Couriers.txt', couriers_file_content)
                 exit()
             elif user_input == 1:
                 if self.operation_mode == 'fast':
@@ -42,9 +42,9 @@ class App:
                 products_file_content = products_and_couriers_menu(clear_command, 'products', self.operation_mode)
             elif user_input == 3:
                 system(clear_command)
-                curiers_file_content = products_and_couriers_menu(clear_command, 'couriers', self.operation_mode)
+                couriers_file_content = products_and_couriers_menu(clear_command, 'couriers', self.operation_mode)
             elif user_input == 4:
                 system(clear_command)
-                curiers_file_content = orders_menu(clear_command, 'orders', self.operation_mode)
+                couriers_file_content = orders_menu(clear_command, 'orders', self.operation_mode)
 
 initiate = App()

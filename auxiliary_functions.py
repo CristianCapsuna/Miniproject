@@ -4,7 +4,7 @@ import json
 def check_if_input_is_a_menu_option(choices:List[int]) -> int:
     try:
         user_input = int(input("Please select a choice: "))
-        print('')
+        print()
         if user_input not in(choices):
             return -1
         return user_input
@@ -35,8 +35,11 @@ def check_if_file_exists_and_load_content(file:str) -> List:
     except (NameError, FileNotFoundError):
         return []
 
-file_content = check_if_file_exists_and_load_content('Orders.txt')
+# file_content = check_if_file_exists_and_load_content('Orders.txt')
 
-for element in file_content:
-    test = list(element.values())[0]
-    print(type(test))
+# for element in file_content:
+#     test = list(element.values())[0]
+#     print(type(test))
+
+# returned_value = check_if_input_is_a_menu_option([0,1,2])
+# print(returned_value)

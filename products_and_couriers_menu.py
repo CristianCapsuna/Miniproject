@@ -50,6 +50,7 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
                 file_content.append(product_to_add)
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} added succesfully.\n')
+                return file_content
             else:
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} already exists.\n')
@@ -68,6 +69,7 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
                     write_to_file(my_file, file_content)
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} {product_to_replace} has been replaced with {key_word} {new_product}.\n')
+                return file_content
             elif len(file_content) == 0:
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
