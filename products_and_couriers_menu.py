@@ -1,5 +1,6 @@
 from os import system
 from auxiliary_functions import *
+from file_handling_functions import *
 
 def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str):
     
@@ -10,9 +11,11 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
         my_file = 'Couriers.txt'
         key_word = 'courier'
     
-    file_content = check_if_file_exists_and_load_content(my_file)
+    file_content = read_file(my_file)
+    next_index = get_specific_index(my_file)
 
     while True:
+
         print(f'{key_word.replace(key_word[0],key_word[0].upper())} menu:\n\
 [0] Return to main menu\n\
 [1] Print {key_word} list\n\
@@ -28,29 +31,28 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
             print('Inappropriate input. Please input a pozitive single digit number, as per the menu\n')
         elif user_input == 0:
             system(clear_command)
-            return file_content
+            break
         elif user_input == 1:
-            if operation_mode == 'safe':
-                file_content = check_if_file_exists_and_load_content(my_file)
-            if file_content:
+            if file_content["content"]:
                 system(clear_command)
                 print(f'List of {key_word}s currently in the list:\n')
-                for x in file_content:
-                    print(x)
+                for idx in range(len(file_content["content"])):
+                    print("ID: " + str(file_content["indexes"][idx]) + " | Item: " + str(file_content["content"][idx]))
                 print('')
             elif len(file_content) == 0:
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
         elif user_input == 2:
-            product_to_add = input(f"Please provide {key_word} to add: ").lower()
+            item_to_add = input(f"Please provide {key_word} to add: ")
             print('')
-            if product_to_add not in file_content:
-                if operation_mode == 'safe':
-                    append_to_file(my_file, file_content, product_to_add)
-                file_content.append(product_to_add)
+            if item_to_add.lower() not in [x.lower() for x in file_content["content"]]:
+                file_content['indexes'].append(next_index)
+                next_index += 1
+                file_content['content'].append(item_to_add)
                 system(clear_command)
+                if operation_mode == 'safe':
+                    write_to_file(my_file, file_content, next_index)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} added succesfully.\n')
-                return file_content
             else:
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} already exists.\n')
@@ -69,7 +71,6 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
                     write_to_file(my_file, file_content)
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} {product_to_replace} has been replaced with {key_word} {new_product}.\n')
-                return file_content
             elif len(file_content) == 0:
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
@@ -111,3 +112,5 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
             pass
         elif user_input == 8:
             pass
+    
+    return file_content, next_index

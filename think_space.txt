@@ -1,0 +1,12 @@
+Safe mode
+
+1. ask for input
+2. get index
+3. write list
+4. write new index
+
+Fast mode
+
+1. ask for input
+2. get index
+3. a

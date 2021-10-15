@@ -1,2 +1,2 @@
-{"1": {"customer_name": "John","customer_address": "London","customer_phone": "0789887334","courier": 2,"status": "preparing"}}
-{"2": {"customer_name": "John","customer_address": "Birmingham","customer_phone": "0789887334","courier": 2,"status": "preparing"}}
+1, {"customer_name": "John","customer_address": "London","customer_phone": "0789887334","courier": 2,"status": "preparing"}
+2, {"customer_name": "John","customer_address": "Birmingham","customer_phone": "0789887334","courier": 2,"status": "preparing"}

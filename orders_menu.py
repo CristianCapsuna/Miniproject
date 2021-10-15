@@ -16,10 +16,7 @@ def orders_menu(clear_command, which_menu:str, operation_mode:str):
 [2] Add new {key_word}\n\
 [3] Amend existing {key_word}\n\
 [4] Delete {key_word}\n\
-[5] Search {key_word}s\n\
-[6] Print courier list\n\
-[7] Add a courier\n\
-[8] Delete a courier\n')
+[5] Search {key_word}s\n')
 
         user_input = check_if_input_is_a_menu_option(list_of_possible_choices)
 
@@ -74,9 +71,10 @@ def orders_menu(clear_command, which_menu:str, operation_mode:str):
             if element_exists_already == False:
                 if operation_mode == 'safe':
                     append_to_file(my_file, file_content, product_to_add)
-                file_content.append(product_to_add)
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} added succesfully.\n')
+                file_content.append(product_to_add)
+                return file_content
             else:
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} already exists.\n')
