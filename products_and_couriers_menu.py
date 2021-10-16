@@ -39,7 +39,7 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
                 for idx in range(len(file_content["content"])):
                     print("ID: " + str(file_content["indexes"][idx]) + " | Item: " + str(file_content["content"][idx]))
                 print('')
-            elif len(file_content) == 0:
+            elif len(file_content["content"]) == 0:
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
         elif user_input == 2:
@@ -57,20 +57,28 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
                 system(clear_command)
                 print(f'{key_word.replace(key_word[0],key_word[0].upper())} already exists.\n')
         elif user_input == 3:
-            product_to_replace = input(f"Please enter the name of the {key_word} you wish to change: ").lower()
-            print('')
+            try:
+                product_to_replace_index = int(input(f"Please use function 5 to find the index of the product you with to change.\n\
+Please enter the index of the {key_word} you wish to change: "))
+                print('')
+            except ValueError:
+                system(clear_command)
+                print("Please input a number corresponding to the product you wish to change.\n\
+Use function 5 to find the mentioned number.")
+                print('')
+                continue
             new_product = input(f"Please enter the name of the new {key_word}: ").lower()
             print('')
             if file_content and new_product not in file_content:
                 try:
-                    file_content[file_content.index(product_to_replace)] = new_product
+                    file_content[file_content.index(product_to_replace_index)] = new_product
                 except ValueError:
                     system(clear_command)
                     print('The item you have inputted is not in the list.\n')
                 if operation_mode == 'safe':
                     write_to_file(my_file, file_content)
                 system(clear_command)
-                print(f'{key_word.replace(key_word[0],key_word[0].upper())} {product_to_replace} has been replaced with {key_word} {new_product}.\n')
+                print(f'{key_word.replace(key_word[0],key_word[0].upper())} {product_to_replace_index} has been replaced with {key_word} {new_product}.\n')
             elif len(file_content) == 0:
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
@@ -94,23 +102,17 @@ def products_and_couriers_menu(clear_command, which_menu:str, operation_mode:str
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
         elif user_input == 5:
-            product_to_search = input(f"Please enter the name of the {key_word} to search for: ").lower()
+            product_to_search = input(f"Please enter the name of the {key_word} to search for: ")
             print('')
-            if file_content:
+            if file_content["content"]:
                 system(clear_command)
                 print(f'The following results have been found of keywork {product_to_search}:\n')
-                for product in file_content:
-                    if product_to_search in product:
-                        print(product)
+                for product in file_content["content"]:
+                    if product_to_search.lower() in product.lower():
+                        print("ID: " + str(file_content["indexes"][file_content["content"].index(product)]) + " | Item: " + product)
                 print("")
-            elif len(file_content) == 0:
+            elif len(file_content["content"]) == 0:
                 system(clear_command)
                 print(f'The {key_word} list is empty\n')
-        elif user_input == 6:
-            pass
-        elif user_input == 7:
-            pass
-        elif user_input == 8:
-            pass
     
     return file_content, next_index
