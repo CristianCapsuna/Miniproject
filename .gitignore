@@ -1,0 +1,9 @@
+Indexes.json
+Products.txt
+Couriers.txt
+Orders.txt
+.DS_Store
+__pycache__
+.pytest_cache
+Dockerfile
+Dockerfile_example
