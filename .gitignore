@@ -7,3 +7,5 @@ __pycache__
 .pytest_cache
 Dockerfile
 Dockerfile_example
+test.py
+list_of_possible_statuses.txt

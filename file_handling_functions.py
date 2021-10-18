@@ -5,10 +5,14 @@ from os.path import getsize
 def write_to_file(my_file:str, file_content:dict, next_index:int):
     content_length = len(file_content["content"])
     if content_length > 0:
+        if type(file_content["content"][0]) == str:
+            my_func = str
+        elif type(file_content["content"][0]) == dict:
+            my_func = json.dumps
         with open(my_file, 'w') as f:
-            f.write(str(file_content["indexes"][0]) + ', ' + str(file_content["content"][0]))
+            f.write(str(file_content["indexes"][0]) + ', ' + my_func(file_content["content"][0]))
             for idx in range(1, content_length):
-                f.write('\n' + str(file_content["indexes"][idx]) + ', ' + str(file_content["content"][idx]))
+                f.write('\n' + str(file_content["indexes"][idx]) + ', ' + my_func(file_content["content"][idx]))
     write_new_indexes(my_file, next_index)
     
 
