@@ -10,6 +10,12 @@ system(clear_command)
 class App:
     
     def __init__(self):
+        products_file_content = None
+        products_next_index = None
+        couriers_file_content = None
+        couriers_next_index = None
+        orders_file_content = None
+        orders_next_index = None
         self.operation_mode = 'fast'
         while True:
             print(f'Main menu:\n\n\
@@ -28,12 +34,12 @@ class App:
                 print('Inappropriate input. Please input a positive single digit number, as per the menu\n')
             elif user_input == 0:
                 if self.operation_mode == 'fast':
-                    if 'products_file_content' in locals():
-                        write_to_file('Products.txt', products_file_content, next_index)
-                    if 'couriers_file_content' in locals():
-                        write_to_file('Couriers.txt', couriers_file_content, next_index)
-                    if 'orders_file_content' in locals():
-                        write_to_file('Orders.txt', orders_file_content, next_index)
+                    if products_file_content != None:
+                        write_to_file('Products.txt', products_file_content, products_next_index)
+                    if couriers_file_content != None:
+                        write_to_file('Couriers.txt', couriers_file_content, couriers_next_index)
+                    if orders_file_content != None:
+                        write_to_file('Orders.txt', orders_file_content, orders_next_index)
                 exit()
             elif user_input == 1:
                 if self.operation_mode == 'fast':
@@ -43,10 +49,10 @@ class App:
                 system(clear_command)
             elif user_input == 2:
                 system(clear_command)
-                products_file_content, next_index = edit_menu(clear_command, 'products', self.operation_mode)
+                products_file_content, products_next_index = edit_menu(clear_command, 'products', self.operation_mode, products_file_content, products_next_index)
             elif user_input == 3:
                 system(clear_command)
-                couriers_file_content, next_index = edit_menu(clear_command, 'couriers', self.operation_mode)
+                couriers_file_content, couriers_next_index = edit_menu(clear_command, 'couriers', self.operation_mode, couriers_file_content, couriers_next_index)
             elif user_input == 4:
                 system(clear_command)
-                orders_file_content, next_index = edit_menu(clear_command, 'orders', self.operation_mode)
+                orders_file_content, orders_next_index = edit_menu(clear_command, 'orders', self.operation_mode, orders_file_content, orders_next_index, products_file_content, couriers_file_content)
