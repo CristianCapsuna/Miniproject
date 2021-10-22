@@ -85,6 +85,7 @@ Please provide {key_word} to add: ")
                 while True:
                     customer_phone = input("Please provide the customer phone number: ")
                     if customer_phone.isnumeric() == True:
+                        customer_phone = int(customer_phone)
                         break
                     else:
                         system(clear_command)

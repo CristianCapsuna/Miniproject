@@ -1,2 +1,0 @@
-1) When courier list is empty and you try to add an order you get stuck in an infinite loop
-2) When you try and add an order the courier list does not see couriers added to the memory during that session
