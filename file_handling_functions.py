@@ -1,92 +1,76 @@
 from typing import List
 import json
 from os.path import getsize
+import config
 
-def write_to_file(my_file:str, file_content:dict, next_index:int):
-    content_length = len(file_content["content"])
-    if content_length > 0:
-        if type(file_content["content"][0]) == str:
-            my_func = str
-        elif type(file_content["content"][0]) == dict:
-            my_func = json.dumps
-        with open(my_file, 'w') as f:
-            f.write(str(file_content["indexes"][0]) + ', ' + my_func(file_content["content"][0]))
-            for idx in range(1, content_length):
-                f.write('\n' + str(file_content["indexes"][idx]) + ', ' + my_func(file_content["content"][idx]))
-    write_new_indexes(my_file, next_index)
+def persist_list_of_strings(my_file:str, indexes: List, content: List):
+    with open(my_file, 'w') as f:
+        f.write( str( indexes[0] ) + ',' + str( content[0] ) )
+        for idx in range( 1, len( content ) ):
+            f.write('\n' + str( indexes[idx] ) + ',' + str( content[idx] ) )
     
-
-# def append_to_file(my_file:str, dict_of_additions:dict):
-#     try:
-#         my_file_size = getsize(my_file)
-#     except FileNotFoundError:
-#         my_file_size = 0
-#     with open(my_file, 'a') as f:
-#         if my_file_size > 0:
-#             f.write('\n' + str(dict_of_additions["indexes"][0]) + ', ' + str(dict_of_additions["content"][0]))
-#         else:
-#             f.write(str(dict_of_additions["indexes"][0]) + ', ' + str(dict_of_additions["content"][0]))
-#         if len(dict_of_additions["content"]) > 1:
-#             for idx in range(1, len(dict_of_additions["content"])):
-#                 f.write(str(dict_of_additions["indexes"][idx]) + ', ' + str(dict_of_additions["content"][idx]))
-#     write_new_indexes(my_file, 'increment')
-          
+def persist_list_of_dictionaries(my_file:str, indexes: List, content: List):
+    with open(my_file, 'w') as f:
+        f.write( str( indexes[0] ) + ',' + json.dumps( content[0] ) )
+        for idx in range( 1, len( content ) ):
+            f.write('\n' + str( indexes[idx] ) + ',' + json.dumps( content[idx] ) )
+         
 def process_lines(f) -> dict:
     try:
         lines = f.readlines()
-        json.loads(lines[0].replace('\n','').split(', ', maxsplit = 1)[1])
+        json.loads(lines[0].replace('\n','').split(',', maxsplit = 1)[1])
         my_operation = return_dict_of_input
     except:
         my_operation = just_return
-    file_content = {"indexes":[], "content":[]}
+    indexes = []
+    content = []
     for line in lines:
-        split_line = line.replace('\n','').split(', ', maxsplit = 1)
+        split_line = line.replace('\n','').split(',', maxsplit = 1)
         index = int(split_line[0])
         line_content = my_operation(split_line[1])
-        file_content["indexes"].append(index)
-        file_content["content"].append(line_content)
-    return file_content
+        indexes.append(index)
+        content.append(line_content)
+    return indexes, content
 
 def read_file(my_file:str) -> dict:
     try:
         with open(my_file) as f:
-            file_content = process_lines(f)
-            return file_content
+            indexes, content = process_lines(f)
+            return indexes, content
     except FileNotFoundError:
-        return {"indexes":[], "content":[]}
+        return [], []
+
+def get_current_index(key_word):
+    current_indexes = load_indexes_json()
+    return current_indexes[f"current {key_word} index"]
 
 def load_indexes_json() -> dict:
     try:
         with open('Indexes.json') as f:
-            next_indexes = json.load(f)
+            current_indexes = json.load(f)
     except FileNotFoundError:
-        next_product_index = check_file_for_max_index('Products.txt')
-        next_courier_index = check_file_for_max_index('Couriers.txt')
-        next_order_index = check_file_for_max_index('Orders.txt')
-        next_indexes = {"next product index": next_product_index,
-                        "next courier index": next_courier_index,
-                        "next order index": next_order_index
-        }
-        with open('Indexes.json', 'w') as f:
-            json.dump(next_indexes, f)
-    return next_indexes
+        current_indexes = create_initial_index_file_and_return_as_dict()
+    return current_indexes
 
-def get_specific_index(my_file):
-    next_indexes = load_indexes_json()
-    
-    if my_file == "Products.txt":
-        return next_indexes["next product index"]
-    elif my_file == "Couriers.txt":
-        return next_indexes["next courier index"]
-    elif my_file == "Orders.txt":
-        return next_indexes["next order index"]
+def create_initial_index_file_and_return_as_dict():
+    current_product_index = check_file_for_max_index(config.PRODUCTS_FILE)
+    current_courier_index = check_file_for_max_index(config.COURIERS_FILE)
+    current_order_index = check_file_for_max_index(config.ORDERS_FILE)
+    current_indexes = {"current product index": current_product_index,
+                    "current courier index": current_courier_index,
+                    "current order index": current_order_index
+    }
+    with open('Indexes.json', 'w') as f:
+        json.dump(current_indexes, f)
+    return current_indexes
 
 def check_file_for_max_index(my_file:str) -> int:
     try:
         with open(my_file) as f:
-            file_content = process_lines(f)
-            if len(file_content["indexes"]) > 0:
-                return (max(file_content["indexes"]) + 1)
+            indexes, content = process_lines(f)
+
+            if len( indexes ) > 0:
+                return ( max( indexes ) + 1 )
             else:
                 return 1
     except FileNotFoundError: 
@@ -94,12 +78,12 @@ def check_file_for_max_index(my_file:str) -> int:
 
 def write_new_indexes(my_file:str, next_index):
     next_indexes = load_indexes_json()
-    if my_file == "Products.txt":
-        next_indexes['next product index'] = next_index
-    elif my_file == "Couriers.txt":
-        next_indexes['next courier index'] = next_index
-    else:
-        next_indexes['next order index'] = next_index
+    if my_file == config.PRODUCTS_FILE:
+        next_indexes['current product index'] = next_index
+    elif my_file == config.COURIERS_FILE:
+        next_indexes['current courier index'] = next_index
+    elif my_file == config.ORDERS_FILE:
+        next_indexes['current order index'] = next_index
     with open("Indexes.json", "w") as f:
         json.dump(next_indexes, f)
 
