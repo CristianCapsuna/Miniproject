@@ -1,8 +1,8 @@
 .venv
-Indexes.json
-Products.txt
-Couriers.txt
-Orders.txt
+Indexes.csv
+Products.csv
+Couriers.csv
+Orders.csv
 .DS_Store
 __pycache__
 .pytest_cache
@@ -10,4 +10,4 @@ Dockerfile
 Dockerfile_example
 test.py
 list_of_possible_statuses.txt
-notes_from_requirements.txt
+Notes.txt
