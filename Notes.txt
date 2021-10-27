@@ -1,1 +1,7 @@
-what happens when you create an order and have no products or couriers?
+1) Should I prevent another courier with the same name from being added?
+2) add a space betwen message of product being added succesfully and new menu print
+3) change to quit to go back where appropriate
+4) catch when people input phone number longer than 15
+5) if no courier or product exits exit the order making process and print better message or start making courier process
+6) when adding products if given mixed input with items that exist and items that don't it won't add what exists and inform what doesn't
+7) fix search functions

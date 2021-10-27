@@ -1,5 +1,4 @@
 from typing import List
-from file_handling_functions import read_file
 from os import system
 
 def check_if_int(user_input) -> int:
