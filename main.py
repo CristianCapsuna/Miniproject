@@ -34,6 +34,7 @@ class App:
                                 "Please select a choice: "
                               )
             if user_input == BACK_CHAR:
+                system( CLEAR_COMMAND )
                 exit()
 
             user_input = self.validate_user_input(
@@ -217,7 +218,6 @@ class App:
         keys = list_of_keys[:-1]
         values = list_of_values[:-1]
 
-        products_key = list_of_keys[-1]
         product_values = list_of_values[-1]
 
         column_names_string, values_string =\
@@ -235,7 +235,6 @@ class App:
         execute_query(f"INSERT INTO orders_map (order_id, product_id) "
                                 "VALUES " + values_string)
         
-        system( CLEAR_COMMAND )
         print(f"Order added succesfully.\n")
 
     def guide_user( self, message: str ):
@@ -497,6 +496,10 @@ class App:
                 system( CLEAR_COMMAND )
                 print(f"Items {choices_which_exist} have been added.\n"
                       f"Items {choices_which_dont_exist} don't exist so have not been added.\n")
+                return choices_which_exist
+            else:
+                system( CLEAR_COMMAND )
+                print(f"Items {choices_which_exist} have been added.\n")
                 return choices_which_exist
     
     def change_dictionary( self, item_to_change_index: int, table_name: str):
