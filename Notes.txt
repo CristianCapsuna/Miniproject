@@ -5,4 +5,5 @@
 5) if no courier or product exits exit the order making process and print better message or start making courier process
 6) when adding products if given mixed input with items that exist and items that don't it won't add what exists and inform what doesn't
 7) fix search functions
-8) make sure numbers can't be inputted
+8) make sure negative numbers can't be inputted
+9) make sure string longer than the database data length thing can't be inputted

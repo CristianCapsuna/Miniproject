@@ -58,15 +58,22 @@ def create_connection():
                                 ");"
         execute_query(create_couriers_table, connection)
 
+        create_statuses_table = "CREATE TABLE statuse("\
+                                "status_id INT NOT NULL AUTO_INCREMENT,"\
+                                "name VARCHAR(50) NOT NULL,"\
+                                "PRIMARY KEY(status_id)"\
+                                ");"
+        execute_query(create_statuses_table, connection)
+
         create_orders_table = "CREATE TABLE orders("\
                                 "order_id INT NOT NULL AUTO_INCREMENT,"\
                                 "customer_name VARCHAR(100) NOT NULL,"\
                                 "customer_address VARCHAR(100) NOT NULL,"\
                                 "customer_phone VARCHAR(15) NOT NULL,"\
                                 "courier INT NOT NULL,"\
-                                "status VARCHAR(50) NOT NULL,"\
+                                "status INT NOT NULL,"\
                                 "PRIMARY KEY(order_id),"\
-                                "FOREIGN KEY(courier) REFERENCES Couriers(courier_id)"\
+                                "FOREIGN KEY(courier) REFERENCES Couriers(courier_id),"\
                                 ");"        
         execute_query(create_orders_table, connection)
 

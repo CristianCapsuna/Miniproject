@@ -37,23 +37,18 @@ class App:
                 system( CLEAR_COMMAND )
                 exit()
 
-            user_input = self.validate_user_input(
-                                                  user_input,
-                                                  [1, 2, 3]
-                                                  )
-
-            if user_input == -1:
-                self.guide_user( INAPPROPRIATE_MENU_CHOICE_STATEMENT )
-
-            elif user_input == 1:
+            if user_input == "1":
                 system( CLEAR_COMMAND )
                 self.products_menu()
-            elif user_input == 2:
+            elif user_input == "2":
                 system( CLEAR_COMMAND )
                 self.couriers_menu()
-            elif user_input == 3:
+            elif user_input == "3":
                 system( CLEAR_COMMAND )
                 self.orders_menu()
+            else:
+                self.guide_user( INAPPROPRIATE_MENU_CHOICE_STATEMENT )
+
     
     def products_menu(self):
 
@@ -61,27 +56,19 @@ class App:
             self.print_generic_menu( "product" )
 
             user_input = input(
-                               f"To go back input {BACK_CHAR}\n"
+                            f"To go back input {BACK_CHAR}\n"
                                 "Please select a choice: "
-                              )
+                            )
             
             if user_input == BACK_CHAR:
                 system( CLEAR_COMMAND )    
                 break
 
-            user_input = self.validate_user_input(
-                                                  user_input,
-                                                  [1, 2, 3, 4, 5]
-                                                 )
-
-            if user_input == -1:
-                self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
-            
-            elif user_input == 1:
+            if user_input == "1":
                 system( CLEAR_COMMAND )
                 self.print_content( "products" )
             
-            elif user_input == 2:
+            elif user_input == "2":
                 system( CLEAR_COMMAND )
                 new_dict = self.build_dictionary(
                                                 [ "name", "price" ],
@@ -93,14 +80,14 @@ class App:
                     continue
                 self.persist_products_or_couriers( new_dict, "products")
 
-            elif user_input == 3:
+            elif user_input == "3":
                 self.change_content( "products" )
 
-            elif user_input == 4:
+            elif user_input == "4":
                 self.delete_item( "products" )
 
-            elif user_input == 5:
-                self.search_for_string_in_list(self.products_indexes, self.products_content)
+            else:
+                self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
     
     def couriers_menu(self):
 
@@ -116,19 +103,11 @@ class App:
                 system( CLEAR_COMMAND )            
                 break
 
-            user_input = self.validate_user_input(
-                                                  user_input,
-                                                  [1, 2, 3, 4, 5]
-                                                 )
-
-            if user_input == -1:
-                self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
-            
-            elif user_input == 1:
+            if user_input == "1":
                 system( CLEAR_COMMAND )
                 self.print_content( "couriers" )
             
-            elif user_input == 2:
+            elif user_input == "2":
                 system( CLEAR_COMMAND )
                 new_dict = self.build_dictionary(
                                                 [ "name", "phone" ],
@@ -140,14 +119,14 @@ class App:
                     continue
                 self.persist_products_or_couriers( new_dict, "couriers")
 
-            elif user_input == 3:
+            elif user_input == "3":
                 self.change_content( "couriers" )
 
-            elif user_input == 4:
+            elif user_input == "4":
                 self.delete_item( "couriers" )
                 
-            elif user_input == 5:
-                self.search_for_string_in_list(self.couriers_indexes, self.couriers_content)
+            else:
+                self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
     
     def orders_menu(self):
         
@@ -162,20 +141,12 @@ class App:
             if user_input == BACK_CHAR:
                 system( CLEAR_COMMAND )
                 break
-
-            user_input = self.validate_user_input(
-                                                  user_input,
-                                                  [1, 2, 3, 4, 5]
-                                                 )
             
-            if user_input == -1:
-                self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
-            
-            elif user_input == 1:
+            if user_input == "1":
                 system( CLEAR_COMMAND )
                 self.print_content( "orders" )
             
-            elif user_input == 2:
+            elif user_input == "2":
                 system( CLEAR_COMMAND )
                 new_dict = self.build_dictionary(
                     [ "customer_name", "customer_address", "customer_phone", "courier", "status", "list_of_products" ],
@@ -187,14 +158,18 @@ class App:
                     continue
                 self.persist_orders( new_dict )
 
-            elif user_input == 3:
+            elif user_input == "3":
                 self.change_content( "orders" )
 
-            elif user_input == 4:
+            elif user_input == "4":
                 self.delete_item( "orders" )
             
-            elif user_input == 5:
+            elif user_input == "5":
                 self.search_order()
+
+            else:
+                self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
+
 
     def persist_products_or_couriers( self, my_dict: dict, table_name: str ):
         
@@ -248,7 +223,6 @@ class App:
               f"[2] Add new {key_word}\n"
               f"[3] Amend existing {key_word}\n"
               f"[4] Delete {key_word}\n"
-              f"[5] Search {key_word}s\n"
                )
 
     def print_content( self, table_name: str , content: dict = None):
