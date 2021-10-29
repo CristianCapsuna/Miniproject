@@ -3,12 +3,10 @@ from os_checker import set_clear_command
 from auxiliary_functions import check_if_int
 from auxiliary_functions import check_if_float
 from auxiliary_functions import check_if_valid_choice
-import config
 from typing import List
 from database_management import get_all_content
 from database_management import execute_query
 from database_management import get_index_of_last_entry
-import pymysql
 from decimal import Decimal
 
 CLEAR_COMMAND = set_clear_command()
@@ -26,7 +24,9 @@ class App:
                   "Main menu:\n\n"
                    "[1] Product menu\n"
                    "[2] Couriers menu\n"
-                   "[3] Orders menu\n"
+                   "[3] Customers menu\n"
+                   "[4] Statuses menu\n"
+                   "[5] Orders menu\n"
                  )
             
             user_input = input(
@@ -39,25 +39,36 @@ class App:
 
             if user_input == "1":
                 system( CLEAR_COMMAND )
-                self.products_menu()
+                self.crud_menu( "product", "products", [ "name", "price" ], [ str, float ])
             elif user_input == "2":
                 system( CLEAR_COMMAND )
-                self.couriers_menu()
+                self.crud_menu( "courier", "couriers", [ "name", "phone" ], [ str, str ])
             elif user_input == "3":
+                system( CLEAR_COMMAND )
+                self.crud_menu( "customer", "customers", [ "name", "address", "phone" ], [ str, str, str ])
+            elif user_input == "4":
+                system( CLEAR_COMMAND )
+                self.crud_menu( "status", "statuses", [ "name" ], [ str ])
+            elif user_input == "5":
                 system( CLEAR_COMMAND )
                 self.orders_menu()
             else:
                 self.guide_user( INAPPROPRIATE_MENU_CHOICE_STATEMENT )
 
     
-    def products_menu(self):
+    def crud_menu(self,
+                      subject_of_menu: str,
+                      table_name: str,
+                      list_of_keys: List,
+                      list_of_data_types: List
+                      ):
 
         while True:
-            self.print_generic_menu( "product" )
+            self.print_generic_menu( subject_of_menu )
 
             user_input = input(
                             f"To go back input {BACK_CHAR}\n"
-                                "Please select a choice: "
+                             "Please select a choice: "
                             )
             
             if user_input == BACK_CHAR:
@@ -66,65 +77,25 @@ class App:
 
             if user_input == "1":
                 system( CLEAR_COMMAND )
-                self.print_content( "products" )
+                self.print_content( table_name )
             
             elif user_input == "2":
                 system( CLEAR_COMMAND )
                 new_dict = self.build_dictionary(
-                                                [ "name", "price" ],
-                                                [ str, float ],
-                                                "products",
+                                                list_of_keys,
+                                                list_of_data_types,
                                                 )
                 if new_dict == BACK_CHAR:
                     system( CLEAR_COMMAND )
                     continue
-                self.persist_products_or_couriers( new_dict, "products")
+                self.persist_standard_crud( new_dict, table_name)
 
             elif user_input == "3":
-                self.change_content( "products" )
+                self.change_content( table_name )
 
             elif user_input == "4":
-                self.delete_item( "products" )
+                self.delete_item( table_name )
 
-            else:
-                self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
-    
-    def couriers_menu(self):
-
-        while True:
-            self.print_generic_menu( "courier" )
-
-            user_input = input(
-                               f"To go back input {BACK_CHAR}\n"
-                                "Please select a choice: "
-                              )
-            
-            if user_input == BACK_CHAR:
-                system( CLEAR_COMMAND )            
-                break
-
-            if user_input == "1":
-                system( CLEAR_COMMAND )
-                self.print_content( "couriers" )
-            
-            elif user_input == "2":
-                system( CLEAR_COMMAND )
-                new_dict = self.build_dictionary(
-                                                [ "name", "phone" ],
-                                                [ str, str ],
-                                                "couriers"
-                                                )
-                if new_dict == BACK_CHAR:
-                    system( CLEAR_COMMAND )
-                    continue
-                self.persist_products_or_couriers( new_dict, "couriers")
-
-            elif user_input == "3":
-                self.change_content( "couriers" )
-
-            elif user_input == "4":
-                self.delete_item( "couriers" )
-                
             else:
                 self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
     
@@ -149,9 +120,8 @@ class App:
             elif user_input == "2":
                 system( CLEAR_COMMAND )
                 new_dict = self.build_dictionary(
-                    [ "customer_name", "customer_address", "customer_phone", "courier", "status", "list_of_products" ],
-                    [ str, str, str, int, str, list ],
-                    "orders"
+                    [ "customer", "courier", "status", "list_of_products" ],
+                    [ int, int, int, list ],
                 )
                 if new_dict == BACK_CHAR:
                     system( CLEAR_COMMAND )
@@ -171,7 +141,7 @@ class App:
                 self.guide_user(INAPPROPRIATE_MENU_CHOICE_STATEMENT)
 
 
-    def persist_products_or_couriers( self, my_dict: dict, table_name: str ):
+    def persist_standard_crud( self, my_dict: dict, table_name: str ):
         
         keys = list( my_dict.keys() )
         values = list( my_dict.values() )
@@ -183,7 +153,7 @@ class App:
                        f"VALUES ({values_string})")
         
         system( CLEAR_COMMAND )
-        print(f"{table_name[:-1].replace(table_name[0],table_name[0].upper())} added succesfully.\n")
+        print(f"{table_name[:-1].replace(table_name[0],table_name[0].upper(), 1)} added succesfully.\n")
 
     def persist_orders( self, my_dict: dict ):
         
@@ -218,7 +188,7 @@ class App:
     
     def print_generic_menu( self, key_word: str):
         print(
-              f"{key_word.replace(key_word[0],key_word[0].upper())} menu:\n\n"
+              f"{key_word.replace(key_word[0],key_word[0].upper(), 1)} menu:\n\n"
               f"[1] Print {key_word} list\n"
               f"[2] Add new {key_word}\n"
               f"[3] Amend existing {key_word}\n"
@@ -249,13 +219,19 @@ class App:
         return content
 
     def get_string_from_user( self, key_word: str ):
-        input_string = input(
-                            f"To quit input {BACK_CHAR}\n"
-                            f"Please provide the {key_word}: "
-                            )
-        print()
 
-        return input_string
+        while True:
+            input_string = input(
+                                f"To go back input {BACK_CHAR}\n"
+                                f"Please provide the {key_word}: "
+                                )
+            if len( input_string ) < 101:
+                print()
+
+                return input_string
+            else:
+                system( CLEAR_COMMAND )
+                print("The string inputted is too long. Please restrain yourself to maximum 100 character.")
     
     def validate_user_input( self, user_input: str, list_of_choices: List ):
         user_input = check_if_int (user_input )
@@ -270,8 +246,8 @@ class App:
         while True:
             content = self.print_content( table_name , content)
             id_to_change = input( 
-                f"To quit input {BACK_CHAR}\n"
-                "Please enter the index you wish to change: "
+                f"To go back input {BACK_CHAR}\n"
+                "Please choose an ID: "
                 )
 
             if id_to_change == BACK_CHAR:
@@ -301,8 +277,8 @@ class App:
         while True:
             content = self.print_content( table_name , content)
             ids_to_change = input( 
-                f"To quit input {BACK_CHAR}\n"
-                "Please enter the index you wish to change: "
+                f"To go back input {BACK_CHAR}\n"
+                "Please choose the IDs, separated by commas. No funny stuff, Henry: "
                 )
 
             if ids_to_change == BACK_CHAR:
@@ -354,6 +330,7 @@ class App:
 
         if table_name == "orders":
             execute_query(f"DELETE FROM orders_map WHERE order_id = {id_to_change}")
+        print(f"DELETE FROM {table_name} WHERE {keys[0]} = {id_to_change}")    
         execute_query(f"DELETE FROM {table_name} WHERE {keys[0]} = {id_to_change}")
 
         system( CLEAR_COMMAND )
@@ -363,7 +340,6 @@ class App:
                          self,
                          list_of_keys: List,
                          list_of_data_types: List,
-                         table_name: str
                          ):
 
         new_dict = {}
@@ -372,7 +348,7 @@ class App:
 
             if list_of_keys[ idx ] == "courier":
                 system( CLEAR_COMMAND )
-                courier_number = self.choose_from_couriers()
+                courier_number = self.user_single_choice_from_table( "couriers", "courier_id" )
 
                 if courier_number == BACK_CHAR:
                     system( CLEAR_COMMAND )
@@ -383,16 +359,27 @@ class App:
             elif list_of_keys[ idx ] == "list_of_products":
                 system( CLEAR_COMMAND )
             
-                list_of_products = self.choose_from_products()
+                list_of_products = self.user_multi_choice_from_table( "products", "product_id" )
 
                 if list_of_products == BACK_CHAR:
                     system( CLEAR_COMMAND )
                     return BACK_CHAR
                 
                 new_dict[ list_of_keys[ idx ] ] = list_of_products
+            
+            elif list_of_keys[ idx ] == "customer":
+                system( CLEAR_COMMAND )
+            
+                customer_number = self.user_single_choice_from_table( "customers", "customer_id" )
+
+                if customer_number == BACK_CHAR:
+                    system( CLEAR_COMMAND )
+                    return BACK_CHAR
+                
+                new_dict[ list_of_keys[ idx ] ] = customer_number
 
             elif list_of_keys[ idx ] == "status":
-                new_dict[ "status" ] = "Preparing"
+                new_dict[ list_of_keys[ idx ] ] = 1
 
             elif "phone" in list_of_keys[ idx ]:
                 system( CLEAR_COMMAND )
@@ -429,26 +416,26 @@ class App:
             
         return new_dict
     
-    def choose_from_couriers( self ):
+    def user_single_choice_from_table( self, table_name: str, id_key: str ):
 
         while True:
-            user_input, content = self.print_content_and_get_single_id_to_change( "couriers")
+            user_input, content = self.print_content_and_get_single_id_to_change( table_name )
 
             if user_input == BACK_CHAR:
                 return BACK_CHAR
 
             user_input = check_if_int(user_input)
-            indexes = [x["courier_id"] for x in content]
-            if user_input in [x["courier_id"] for x in content]:
+            indexes = [x[ id_key ] for x in content]
+            if user_input in indexes:
                 return user_input
             else:
                 system( CLEAR_COMMAND )
                 print("\nPlease input a valid number corresponding to one of the couriers.\n")
     
-    def choose_from_products( self ):
+    def user_multi_choice_from_table( self, table_name: str, id_key: str ):
 
         while True:
-            list_of_inputs, content = self.print_content_and_get_multiple_ids_to_add( "products" )
+            list_of_inputs, content = self.print_content_and_get_multiple_ids_to_add( table_name )
 
             if list_of_inputs == BACK_CHAR:
                 return BACK_CHAR
@@ -456,8 +443,9 @@ class App:
             choices_which_exist, choices_which_dont_exist = [], []
 
             for choice in list_of_inputs:
-
-                if choice in [x["product_id"] for x in content]:
+                
+                indexes = [x[ id_key ] for x in content]
+                if choice in indexes:
                     choices_which_exist.append(choice)
                 else:
                     choices_which_dont_exist.append(choice)
@@ -468,12 +456,10 @@ class App:
                 continue
             elif len(choices_which_dont_exist) != 0:
                 system( CLEAR_COMMAND )
-                print(f"Items {choices_which_exist} have been added.\n"
-                      f"Items {choices_which_dont_exist} don't exist so have not been added.\n")
+                print(f"Items {choices_which_dont_exist} don't exist so have not been added.\n")
                 return choices_which_exist
             else:
                 system( CLEAR_COMMAND )
-                print(f"Items {choices_which_exist} have been added.\n")
                 return choices_which_exist
     
     def change_dictionary( self, item_to_change_index: int, table_name: str):
@@ -481,6 +467,8 @@ class App:
         system( CLEAR_COMMAND )
         while True:
             new_content = get_all_content( table_name )
+            if table_name == "orders":
+                new_content = self.create_list_of_products( new_content )
             dict_keys = list(new_content[0].keys())
             for item in new_content:
                 if item[dict_keys[0]] == item_to_change_index:
@@ -512,14 +500,18 @@ class App:
             type_of_value_at_index = type(value_at_index)
             print( type_of_value_at_index )
 
-            if key_at_index == "courier":
-                self.change_courier( dictionary_to_change, item_to_change_index )
+            if key_at_index == "customer":
+                self.amend_single_choice_field( dictionary_to_change, item_to_change_index, "customers", "customer", "customer_id" )
+
+            elif key_at_index == "courier":
+                self.amend_single_choice_field( dictionary_to_change, item_to_change_index, "couriers", "courier", "courier_id")
 
             elif key_at_index == "list_of_products":
-                self.change_list_of_products( dictionary_to_change, item_to_change_index )
+                self.amend_multi_choice_field( dictionary_to_change, item_to_change_index )
 
             elif key_at_index == "status":
-                self.change_status( dictionary_to_change, item_to_change_index )
+                self.amend_single_choice_field( dictionary_to_change, item_to_change_index, "statuses", "status", "status_id")
+                # self.change_status( dictionary_to_change, item_to_change_index )
             
             elif "phone" in key_at_index:
                 self.replace_phone_number_in_dict( dictionary_to_change,
@@ -541,33 +533,33 @@ class App:
 
         return 1
 
-    def change_courier( self, dictionary_to_change: dict, item_to_change_index: int ):
+    def amend_single_choice_field( self, dictionary_to_change: dict, item_to_change_index: int, table_name: str, dict_key: str, id_key: str ):
         system( CLEAR_COMMAND )
         while True:
-            print(f"Courier currently being used is ID {str(dictionary_to_change['courier'])}\n")
-            courier_number = self.choose_from_couriers()
+            print(f"Courier currently being used is ID {str(dictionary_to_change[ dict_key ])}\n")
+            inputted_number = self.user_single_choice_from_table( table_name, id_key )
 
-            if courier_number == BACK_CHAR:
+            if inputted_number == BACK_CHAR:
                 system( CLEAR_COMMAND )
                 return
 
-            current_courier_number = dictionary_to_change["courier"]
-            if courier_number != current_courier_number:
-                execute_query("UPDATE orders " 
-                              f"SET courier = {courier_number} "
+            current_inputted_number = dictionary_to_change[ dict_key ]
+            if inputted_number != current_inputted_number:
+                execute_query(f"UPDATE orders " 
+                              f"SET {dict_key} = {inputted_number} "
                               f"WHERE order_id = {item_to_change_index};")
                 system( CLEAR_COMMAND )
-                print("Courier changed succesfully\n")
+                print(f"{dict_key.replace(dict_key[0],dict_key[0].upper(), 1)} changed succesfully\n")
                 return
             else:
                 system( CLEAR_COMMAND )
                 print("The new value provided is the same as the value currently present\n")
         
-    def change_list_of_products ( self, dictionary_to_change: dict, order_id: int ):
+    def amend_multi_choice_field ( self, dictionary_to_change: dict, order_id: int ):
         system( CLEAR_COMMAND )
         while True:
             print(f"IDs of products currently in the list {str(dictionary_to_change['list_of_products'])}\n")
-            list_of_products = self.choose_from_products()
+            list_of_products = self.user_multi_choice_from_table( "products", "product_id" )
 
             if list_of_products == BACK_CHAR:
                 system( CLEAR_COMMAND )
@@ -591,41 +583,18 @@ class App:
                 
                 execute_query(f"INSERT INTO orders_map (order_id, product_id) "
                                 "VALUES " + values_string)
-                system( CLEAR_COMMAND )
-                print("list_of_products changed succesfully\n")
+
+                print("List of products changed succesfully\n")
                 return dictionary_to_change
             else:
                 system( CLEAR_COMMAND )
                 print("The new value provided is the same as the value currently present\n")
     
-    def change_status( self, dictionary_to_change: dict, item_to_change_index ):
-        system( CLEAR_COMMAND )
-        while True:
-
-            print(f"The current order status is {dictionary_to_change['status']}\n")
-
-            new_shipping_status = self.print_available_statuses_and_get_input()
-
-            if new_shipping_status == BACK_CHAR:
-                system( CLEAR_COMMAND )
-                return dictionary_to_change
-
-            if new_shipping_status != dictionary_to_change["status"]:
-                execute_query("UPDATE orders " 
-                              f"SET status = {new_shipping_status} "
-                              f"WHERE order_id = {item_to_change_index};")
-                system( CLEAR_COMMAND )
-                print("Status changed succesfully\n")
-                return
-            else:
-                system( CLEAR_COMMAND )
-                print("The new status provided is the same as the existing one\n")
-    
     def get_number_of_same_type( self, data_type: type, key_word: str ):
         if data_type == int:
-            my_func = int
+            my_func = check_if_int
         else:
-            my_func = float
+            my_func = check_if_float
 
         while True:
             expected_number = self.get_string_from_user( key_word )
@@ -634,12 +603,13 @@ class App:
                 system( CLEAR_COMMAND )
                 return BACK_CHAR
 
-            try:
-                expected_number = my_func(expected_number)
+            expected_number = my_func( expected_number )
+
+            if expected_number != -1:
                 return expected_number
-            except ValueError:
+            else:
                 system( CLEAR_COMMAND )
-                print("Please input only numbers.\n")
+                print("Please input only positive numbers.\n")
 
     def get_phone_number( self, key_word ):
 
@@ -764,7 +734,6 @@ class App:
                 system( CLEAR_COMMAND )
                 return
 
-            item_to_change_index = check_if_int(item_to_change_index)
             maybe_back = self.change_dictionary( item_to_change_index, table_name )
             if maybe_back == BACK_CHAR:
                 return
@@ -783,77 +752,30 @@ class App:
             if user_input == BACK_CHAR:
                 system( CLEAR_COMMAND )
                 return
-            
-            user_input = self.validate_user_input( user_input, [1,2])
 
-            if user_input == -1:
+            if user_input == "1":
+                system( CLEAR_COMMAND )
+                user_input = self.user_single_choice_from_table( "couriers", "courier_id" )
+
+                if user_input == BACK_CHAR:
+                    system( CLEAR_COMMAND )
+                    return
+
+                
+
+            elif user_input == "2":
+                system( CLEAR_COMMAND )
+                user_input = self.user_single_choice_from_table( "statuses", "status_id" )
+
+                if user_input == BACK_CHAR:
+                    system( CLEAR_COMMAND )
+                    return
+
+                content = get_all_content()
+
+            else:
                 system( CLEAR_COMMAND )
                 print("Invalid choice. Please provide a number as per the menu.\n")
-            elif user_input == 1:
-                system( CLEAR_COMMAND )
-                user_input = self.choose_from_couriers()
-
-                if user_input == BACK_CHAR:
-                    system( CLEAR_COMMAND )
-                    return
-
-                self.filter_order( user_input, "courier" )
-            elif user_input == 2:
-                system( CLEAR_COMMAND )
-                user_input = self.print_available_statuses_and_get_input()
-
-                if user_input == BACK_CHAR:
-                    system( CLEAR_COMMAND )
-                    return
-
-                self.filter_order( user_input, "status" )
-    
-    def filter_order( self, user_input, key: str):
-
-        list_of_results = []
-        for item in self.orders_content:
-            if item[ key ] == user_input:
-                list_of_results.append(item)
-        
-        if len(list_of_results) > 0:
-            system( CLEAR_COMMAND )
-            print("The below search results have been found:\n")
-
-            for item in list_of_results:
-                print(item)
-            print()
-        else:
-            system( CLEAR_COMMAND )
-            print("No matches found")
-            return
-
-    def print_available_statuses_and_get_input( self ):
-        while True:
-            with open("list_of_possible_statuses.txt") as f:
-
-                lines = [x.replace("\n", "") for x in f.readlines()]
-
-                print("The available statuses are as per the below:\n")
-
-                for idx, status in enumerate(lines):
-                    print(f"[{idx}] {status}")
-                print()
-
-                user_input = input(f"To go back input {BACK_CHAR}\n"
-                                    "Please choose which status you would like to use: ")
-
-                if user_input == BACK_CHAR:
-                    system( CLEAR_COMMAND )
-                    return BACK_CHAR
-
-                user_input = self.validate_user_input( user_input, range( idx + 1 ) )
-
-                if user_input == -1:
-                    system( CLEAR_COMMAND )
-                    print("The given value is not a number or not in the list.\n")
-                    continue
-                else:
-                    return lines[ user_input ]
 
     def print_line_with_nice_spacing( self, list_of_items: List):
         space_until_next = 20

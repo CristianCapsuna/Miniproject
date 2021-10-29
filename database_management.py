@@ -50,39 +50,48 @@ def create_connection():
                                 ");"
         execute_query(create_products_table, connection)
 
+        create_orders_table = "CREATE TABLE orders("\
+                                "order_id INT NOT NULL AUTO_INCREMENT,"\
+                                "customer INT NOT NULL,"\
+                                "courier INT NOT NULL,"\
+                                "status INT NOT NULL,"\
+                                "PRIMARY KEY(order_id)"\
+                                ");"        
+        execute_query(create_orders_table, connection)
+
         create_couriers_table = "CREATE TABLE couriers("\
                                 "courier_id INT NOT NULL AUTO_INCREMENT,"\
                                 "name VARCHAR(100) NOT NULL,"\
                                 "phone VARCHAR(15) NOT NULL,"\
                                 "PRIMARY KEY(courier_id)"\
                                 ");"
+                                # "FOREIGN KEY(courier_id) REFERENCES orders(courier)"\
         execute_query(create_couriers_table, connection)
 
-        create_statuses_table = "CREATE TABLE statuse("\
+        create_customers_table = "CREATE TABLE customers("\
+                                "customer_id INT NOT NULL AUTO_INCREMENT,"\
+                                "name VARCHAR(100) NOT NULL,"\
+                                "address VARCHAR(100) NOT NULL,"\
+                                "phone VARCHAR(15) NOT NULL,"\
+                                "PRIMARY KEY(customer_id)"\
+                                ");"
+                                # "FOREIGN KEY(customer_id) REFERENCES orders(customer)"\
+        execute_query(create_customers_table, connection)
+
+        create_statuses_table = "CREATE TABLE statuses("\
                                 "status_id INT NOT NULL AUTO_INCREMENT,"\
                                 "name VARCHAR(50) NOT NULL,"\
                                 "PRIMARY KEY(status_id)"\
                                 ");"
+                                # "FOREIGN KEY(status_id) REFERENCES orders(status)"\
         execute_query(create_statuses_table, connection)
-
-        create_orders_table = "CREATE TABLE orders("\
-                                "order_id INT NOT NULL AUTO_INCREMENT,"\
-                                "customer_name VARCHAR(100) NOT NULL,"\
-                                "customer_address VARCHAR(100) NOT NULL,"\
-                                "customer_phone VARCHAR(15) NOT NULL,"\
-                                "courier INT NOT NULL,"\
-                                "status INT NOT NULL,"\
-                                "PRIMARY KEY(order_id),"\
-                                "FOREIGN KEY(courier) REFERENCES Couriers(courier_id),"\
-                                ");"        
-        execute_query(create_orders_table, connection)
 
         mapping_table_for_orders_and_product = "CREATE TABLE orders_map("\
                                 "order_id INT NOT NULL,"\
-                                "product_id INT NOT NULL,"\
-                                "FOREIGN KEY(order_id) REFERENCES Orders(order_id),"\
-                                "FOREIGN KEY(product_id) REFERENCES Products(product_id)"\
+                                "product_id INT NOT NULL"\
                                 ");"        
+                                # "FOREIGN KEY(order_id) REFERENCES orders(order_id),"\
+                                # "FOREIGN KEY(product_id) REFERENCES products(product_id)"\
         execute_query(mapping_table_for_orders_and_product, connection)
 
     return connection
