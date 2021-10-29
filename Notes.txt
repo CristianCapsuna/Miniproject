@@ -2,3 +2,4 @@
 2) ORDERS ARE ALWAYS CREATED WITH STATUS ID 1 SO IF THAT'S NOT PREPARING THEN YOU HAVE A PROBLEM.
 3) Cannot delete things
 4) When I set up foreing keys, it either doesn't work or doesn't let me delete my order
+5) Back tick when inputting price of product throws error.
