@@ -407,10 +407,7 @@ class App:
 
                 expected_number = self.get_number_of_same_type( data_type, list_of_keys[idx] )
 
-                print( expected_string )
-                print( BACK_CHAR )
-
-                if expected_string == BACK_CHAR:
+                if expected_number == BACK_CHAR:
                     system( CLEAR_COMMAND )
                     return BACK_CHAR
 
